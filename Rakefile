@@ -12,7 +12,7 @@ end
 
 task :update_config => :create_dna do
   remote("mkdir -p /etc/chef")
-  sh "#{RSYNC} #{TOPDIR}/config/* #{HOST_LOGIN}:/etc/chef/"
+  rsync("#{TOPDIR}/config/*", "/etc/chef/")
   File.delete(File.dirname(__FILE__) + "/config/dna.json")
 end
 
@@ -20,27 +20,35 @@ desc "rsync the cookbooks to #{HOST}"
 task :update_cookbooks do
   remote("mkdir -p /var/chef")
   ['site-cookbooks', 'cookbooks'].each do |name|
-    sh "#{RSYNC} --exclude=openldap --exclude=quick_start #{File.join(TOPDIR, name)}/ #{HOST_LOGIN}:/var/chef/#{name}"
+    rsync("#{File.join(TOPDIR, name)}/", "/var/chef/#{name}", "--exclude=openldap --exclude=quick_start")
   end
 end
 
 desc "Run chef-solo on #{HOST}"
 task :run_chef_solo => [:update_config, :update_cookbooks] do
   command = "chef-solo -j /etc/chef/dna.json -c /etc/chef/solo.rb"
-  command << " -l debug" if ENV['DEBUG'] == 'true' 
+  command << " -l debug" if ENV.has_key? 'debug'
   remote(command)
 end
 
 task :install_custom_chef do
-  sh "#{RSYNC} chef-0.6.2.gem #{HOST_LOGIN}:"
+  rsync("chef-0.6.2.gem", "")
   remote "gem install chef-0.6.2.gem"
 end
 
+def rsync(src, dest, args="")
+  HOSTS.each do |host|
+    sh "#{RSYNC} #{args} #{src} root@#{host}:#{dest}"
+  end
+end
+
 def remote(cmd)
-  sh "ssh #{HOST_LOGIN} '#{cmd}'"
+  HOSTS.each do |host|
+    sh "ssh root@#{host} '#{cmd}'"
+  end
 end
 
 task :default => :run_chef_solo
 
 desc "Automatically initialze #{HOST} from scratch. You should only have to enter the root password once."
-task(:initialize_host => ['add_ssh_key', 'setup_dns', 'chef:solo', 'install_custom_chef', 'run_chef_solo']) {}
+task(:initialize_host => ['add_ssh_key', 'chef:solo', 'install_custom_chef', 'run_chef_solo']) {}

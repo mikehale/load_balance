@@ -1,0 +1,26 @@
+# Enable configuration of arp_ignore option
+net.ipv4.conf.all.arp_ignore = 1
+
+# When an arp request is received on eth0, only respond if that address is
+# configured on eth0. In particular, do not respond if the address is
+# configured on lo
+net.ipv4.conf.eth0.arp_ignore = 1
+#net.ipv4.conf.eth1.arp_ignore = 1
+
+
+# Enable configuration of arp_announce option
+net.ipv4.conf.all.arp_announce = 2
+
+# When making an ARP request sent through eth0 Always use an address that
+# is configured on eth0 as the source address of the ARP request.  If this
+# is not set, and packets are being sent out eth0 for an address that is on
+# lo, and an arp request is required, then the address on lo will be used.
+# As the source IP address of arp requests is entered into the ARP cache on
+# the destination, it has the effect of announcing this address.  This is
+# not desirable in this case as adresses on lo on the real-servers should
+# be announced only by the linux-director.
+net.ipv4.conf.eth0.arp_announce = 2
+#net.ipv4.conf.eth1.arp_announce = 2
+
+# Enables packet forwarding
+net.ipv4.ip_forward = 1

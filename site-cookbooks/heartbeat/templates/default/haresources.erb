@@ -1,0 +1,8 @@
+<% 
+  server = @node[:heartbeat][:servers].first
+  address = @node[:heartbeat][:service_address]
+  netmask = address.gsub(/(.*)\.\d{3}/,'\1.255')
+-%>
+<%= server %> \
+  LVSSyncDaemonSwap::master \
+  IPaddr2::<%= address %>/24/eth0/<%= netmask %>

@@ -1,0 +1,11 @@
+logfacility daemon
+<% @servers.each do |server| -%>
+node <%= server %>
+<% end -%>
+keepalive 1
+deadtime 3
+bcast <%= @interfaces.join(' ') %>
+ping <%= @router %>
+auto_failback on
+respawn hacluster /usr/lib/heartbeat/ipfail
+apiauth ipfail gid=haclient uid=hacluster

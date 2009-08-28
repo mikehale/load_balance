@@ -1,0 +1,49 @@
+# Global Directives
+checktimeout=10
+checkinterval=2
+autoreload=no
+logfile="local0"
+quiescent=yes
+
+# Virtual Server for HTTP
+virtual=<%= @node[:heartbeat][:service_address] %>:80
+        fallback=127.0.0.1:80
+        real=192.168.6.2:80 gate
+        real=192.168.6.3:80 gate
+        service=http
+        request="index.html"
+        receive="Test Page"
+        scheduler=rr
+        #persistent=600
+        protocol=tcp
+	checktype=negotiate
+
+# Virtual Service for HTTPS
+virtual=<%= @node[:heartbeat][:service_address] %>:443
+        fallback=127.0.0.1:443
+        real=192.168.6.2:443 gate
+        real=192.168.6.3:443 gate
+        service=https
+        request="index.html"
+        receive="Test Page"
+        scheduler=rr
+        #persistent=600
+        protocol=tcp
+	checktype=negotiate
+
+# Virtual Service for FTP
+# Note that peresistancy needs to be turned on for FTP when
+# used with LVS-TUN (ipip) or LVS-DR (gate), but not with LVS-NAT (masq).
+virtual=<%= @node[:heartbeat][:service_address] %>:21
+        fallback=127.0.0.1:21
+        real=192.168.6.2:21 gate
+        real=192.168.6.3:21 gate
+        service=ftp
+        request="welcome.msg"
+        receive="Welcome"
+ 	login="anonymous"
+        passwd="anon@anon.anon"
+        scheduler=rr
+        #persistent=600
+        protocol=tcp
+	checktype=negotiate

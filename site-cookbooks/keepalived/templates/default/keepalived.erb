@@ -1,0 +1,32 @@
+<%
+  public_interface = "eth0"
+  private_interface = "eth0"
+  backup_priority = 101
+  
+  @servers.each_with_index do |ip, index|
+    # interface = @node[:network][:default_interface]
+    # @node[:network][:interfaces][interface][:addresses][ip]
+    
+    
+  if ip == @node[:ipaddress]
+    state = "MASTER"
+    priority = 150
+  else
+    state = "BACKUP"
+    priority = backup_priority -= 1
+  end -%>
+vrrp_instance loadbalance<%= 1 + index %> {
+  state <%= state %>
+  priority <%= priority %>
+  virtual_router_id <%= 50 + index %>
+  interface <%= private_interface %>
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass ogi3n1
+  }
+  virtual_ipaddress {
+    <%= ip %>/24 dev <%= public_interface %>
+  }
+}
+<% end -%>

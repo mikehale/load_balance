@@ -1,0 +1,26 @@
+<%
+  ip = @ip
+  public_interface = "eth0"
+  private_interface = "eth0"
+  
+  if ip == @node[:ipaddress]
+    state = "MASTER"
+    priority = 150
+  else
+    state = "BACKUP"
+    priority = 100
+  end -%>
+vrrp_instance loadbalance1 {
+  state <%= state %>
+  priority <%= priority %>
+  virtual_router_id 50
+  interface <%= private_interface %>
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass ogi3n1
+  }
+  virtual_ipaddress {
+    <%= ip %>/24 dev <%= public_interface %>
+  }
+}
