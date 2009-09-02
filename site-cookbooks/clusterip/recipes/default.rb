@@ -19,3 +19,7 @@ end
 bash "add shared ip to interface" do
   code "ip address add #{node[:shared_ip]} dev eth0 || true"
 end
+
+# TODO: connect to heartbeat/keepalived to run a script when one of the nodes is dead like:
+# echo "+1" > /proc/net/ipt_CLUSTERIP/192.168.1.1 or 
+# echo "-1" > /proc/net/ipt_CLUSTERIP/192.168.1.1
