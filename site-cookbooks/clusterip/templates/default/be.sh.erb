@@ -1,0 +1,5 @@
+#!/bin/sh
+
+<% @other_nodes.each do |e| -%>
+  echo "<%= @master ? '+' : '-' %><%= e %>" >> /proc/net/ipt_CLUSTERIP/<%= @cluster_ip %>
+<% end -%>
