@@ -6,9 +6,7 @@ Uses the iptables CLUSTERIP target to create an ip address that is shared betwee
 
 You need to define the following attributes
 
-`:cluster => {:members => %w[member1 member2],
-               :ip => "shared.ip.address",
-               :mac => "01:00:5e:xx:xx:xx"}`
+`:cluster => {:members => %w[member1 member2], :ip => "shared.ip.address", :mac => "01:00:5e:xx:xx:xx"}`
 
 The mac address should begin with 01:00:5e to indicate that it is a multicast mac address.
 
